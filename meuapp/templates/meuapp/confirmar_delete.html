@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Exclusão</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0d0d0f; --surface: #141416; --border: #222228;
+            --accent: #c8f55a; --text: #f0f0f0; --muted: #6b6b7a;
+            --danger: #ff5c5c; --danger-dim: rgba(255,92,92,0.10); --danger-border: rgba(255,92,92,0.35);
+        }
+        body {
+            background: var(--bg); color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+            background-image: radial-gradient(ellipse 50% 40% at 50% 30%, rgba(255,92,92,0.05) 0%, transparent 60%);
+        }
+        .card { width: 100%; max-width: 440px; animation: fadeUp 0.4s ease both; }
+
+        .icon-wrap {
+            width: 64px; height: 64px; border-radius: 16px;
+            background: var(--danger-dim); border: 1px solid var(--danger-border);
+            display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+        }
+
+        .badge-danger {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--danger-dim); border: 1px solid var(--danger-border);
+            color: var(--danger); font-family: 'Syne', sans-serif;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 5px 12px; border-radius: 100px; margin-bottom: 14px;
+        }
+
+        h1 { font-family: 'Syne', sans-serif; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; }
+        .subtitle { color: var(--muted); font-size: 14px; font-weight: 300; line-height: 1.6; margin-bottom: 32px; }
+        .subtitle strong { color: var(--text); font-weight: 500; }
+
+        .pessoa-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 18px 20px; margin-bottom: 32px;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .pessoa-nome { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+        .pessoa-info { font-size: 13px; color: var(--muted); }
+
+        .actions { display: flex; gap: 12px; }
+
+        .btn-cancel {
+            flex: 1; background: transparent; border: 1px solid var(--border);
+            color: var(--muted); font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600;
+            padding: 13px; border-radius: 10px; text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .btn-cancel:hover { border-color: var(--muted); color: var(--text); }
+
+        .btn-confirm {
+            flex: 1; background: var(--danger); border: none; color: #fff;
+            font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+            padding: 13px; border-radius: 10px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-confirm:hover { background: #ff4040; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,92,92,0.3); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+<div class="card">
+
+    <div class="icon-wrap">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 7h18M11 7V5h6v2M10.5 11v9M17.5 11v9M6 7l1.5 15h13L22 7" stroke="#ff5c5c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="badge-danger">Ação irreversível</div>
+    <h1>Excluir Pessoa</h1>
+    <p class="subtitle">Tem certeza que deseja excluir <strong>{{ pessoa.nome }}</strong>? Esta ação não pode ser desfeita.</p>
+
+    <div class="pessoa-card">
+        <span class="pessoa-nome">{{ pessoa.nome }}</span>
+        <span class="pessoa-info">{{ pessoa.idade }} anos &nbsp;·&nbsp; {{ pessoa.email }}</span>
+        <span class="pessoa-info">{{ pessoa.telefone }}</span>
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'listar_pessoas' %}" class="btn-cancel">Cancelar</a>
+        <form method="post" style="flex:1; display:flex;">
+            {% csrf_token %}
+            <button type="submit" class="btn-confirm" style="width:100%;">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 4h9M6 4V3h3v1M5.5 6v6M9.5 6v6M3 4l1 9h7l1-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Sim, excluir
+            </button>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

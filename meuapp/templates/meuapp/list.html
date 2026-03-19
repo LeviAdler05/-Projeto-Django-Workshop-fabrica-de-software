@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pessoas Cadastradas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0d0d0f; --surface: #141416; --border: #222228;
+            --accent: #c8f55a; --accent-dim: rgba(200,245,90,0.12);
+            --text: #f0f0f0; --muted: #6b6b7a; --danger: #ff5c5c;
+            --danger-dim: rgba(255,92,92,0.08);
+        }
+        body {
+            background: var(--bg); color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh; padding: 48px 24px;
+            background-image:
+                radial-gradient(ellipse 60% 40% at 80% 10%, rgba(200,245,90,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 30% at 10% 80%, rgba(200,245,90,0.04) 0%, transparent 50%);
+        }
+        .wrapper { max-width: 860px; margin: 0 auto; }
+
+        header { margin-bottom: 48px; animation: fadeUp 0.5s ease both; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--accent-dim); border: 1px solid rgba(200,245,90,0.3);
+            color: var(--accent); font-family: 'Syne', sans-serif;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 5px 12px; border-radius: 100px; margin-bottom: 16px;
+        }
+        .badge::before {
+            content: ''; width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%; animation: pulse 2s ease infinite;
+        }
+        h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+        h1 span { color: var(--accent); }
+        .subtitle { color: var(--muted); font-size: 14px; margin-top: 8px; font-weight: 300; }
+
+        .actions-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px; animation: fadeUp 0.5s 0.1s ease both;
+        }
+        .count { font-size: 13px; color: var(--muted); }
+        .count strong { color: var(--text); font-weight: 500; }
+
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--accent); color: #0d0d0f;
+            font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+            letter-spacing: 0.02em; padding: 10px 20px; border-radius: 8px;
+            text-decoration: none; transition: all 0.2s ease;
+        }
+        .btn-primary:hover { background: #d9ff70; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,245,90,0.25); }
+        .btn-primary svg { transition: transform 0.2s ease; }
+        .btn-primary:hover svg { transform: rotate(90deg); }
+
+        .table-wrap { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; animation: fadeUp 0.5s 0.2s ease both; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--surface); border-bottom: 1px solid var(--border); }
+        thead th { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 14px 20px; text-align: left; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s ease; animation: rowIn 0.4s ease both; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(255,255,255,0.025); }
+        td { padding: 18px 20px; font-size: 14px; vertical-align: middle; }
+
+        .td-nome { font-weight: 500; color: var(--text); font-family: 'Syne', sans-serif; }
+        .td-idade { color: var(--muted); }
+        .td-idade span { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 2px 10px; font-size: 12px; }
+        .td-email a, .td-telefone { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.15s; }
+        .td-email a:hover { color: var(--accent); }
+
+        .td-actions { white-space: nowrap; }
+        .btn-edit, .btn-delete {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: transparent; border: 1px solid var(--border); color: var(--muted);
+            font-size: 12px; font-family: 'Syne', sans-serif; font-weight: 600;
+            letter-spacing: 0.04em; padding: 6px 14px; border-radius: 6px;
+            text-decoration: none; transition: all 0.2s ease; cursor: pointer;
+        }
+        .btn-edit:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+        .btn-delete { margin-left: 8px; }
+        .btn-delete:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-dim); }
+
+        /* Reset form styles for the delete button */
+        .delete-form { display: inline; margin: 0; padding: 0; }
+
+        .empty { padding: 64px 20px; text-align: center; }
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+        .empty p { color: var(--muted); font-size: 15px; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes rowIn  { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes pulse  { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        tbody tr:nth-child(1) { animation-delay: 0.25s; }
+        tbody tr:nth-child(2) { animation-delay: 0.32s; }
+        tbody tr:nth-child(3) { animation-delay: 0.39s; }
+        tbody tr:nth-child(4) { animation-delay: 0.46s; }
+        tbody tr:nth-child(5) { animation-delay: 0.53s; }
+        tbody tr:nth-child(n+6) { animation-delay: 0.6s; }
+
+        @media (max-width: 640px) {
+            .table-wrap { border-radius: 12px; }
+            thead th:nth-child(3), thead th:nth-child(4) { display: none; }
+            td:nth-child(3), td:nth-child(4) { display: none; }
+            td { padding: 14px 14px; }
+            thead th { padding: 12px 14px; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <header>
+        <div class="badge">Sistema de Cadastro</div>
+        <h1>Pessoas <span>Cadastradas</span></h1>
+        <p class="subtitle">Gerencie os registros de contatos do sistema.</p>
+    </header>
+
+    <div class="actions-bar">
+        <p class="count">
+            Exibindo <strong>{% if pessoas %}{{ pessoas|length }} registro{{ pessoas|length|pluralize }}{% else %}0 registros{% endif %}</strong>
+        </p>
+        <a href="{% url 'criar_pessoa' %}" class="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Nova Pessoa
+        </a>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pessoa in pessoas %}
+                <tr>
+                    <td class="td-nome">{{ pessoa.nome }}</td>
+                    <td class="td-idade"><span>{{ pessoa.idade }} anos</span></td>
+                    <td class="td-email"><a href="mailto:{{ pessoa.email }}">{{ pessoa.email }}</a></td>
+                    <td class="td-telefone">{{ pessoa.telefone }}</td>
+                    <td class="td-actions">
+                        <a href="{% url 'atualizar_pessoa' pessoa.id %}" class="btn-edit">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8.5 1.5L10.5 3.5L4 10H2V8L8.5 1.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                            Editar
+                        </a>
+                        <form method="post" action="{% url 'deletar_pessoa' pessoa.id %}" class="delete-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 3h8M5 3V2h2v1M4.5 5v4M7.5 5v4M3 3l.5 6h5L9 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Apagar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">
+                        <div class="empty">
+                            <div class="empty-icon">👤</div>
+                            <p>Nenhuma pessoa cadastrada ainda.<br>Clique em <strong>Nova Pessoa</strong> para começar.</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+</body>
+</html>
